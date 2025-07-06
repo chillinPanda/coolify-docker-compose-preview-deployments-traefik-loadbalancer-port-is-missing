@@ -20,11 +20,15 @@ The "pr preview" docker-compose-pr-1.yaml is missing the two port lines.
 2. Add your fork into your GitHub App
    * In Coolify -> Sources -> your GitHub App -> on the top: "Update Repositories"
 3. Create a new project / resource using your fork
+   * Using "Private Repository (with GitHub App)" 
    * Using main branch
-   * Using docker-compose.yaml
-4. In the domains section map the nginx to port 1234, e.g. https://reproduction.myhost.com:1234
+   * Build Pack: Docker Compose
+   * Using /docker-compose.yaml
+4. In the domains section, map the Nginx to port 1234, e.g. https://reproduction.myhost.com:1234
 5. Deploy the application
 6. Verify that it is working
+7. Enable "Preview Deployments"
+   * Configuration -> Advanced -> General -> Activate "Preview Deployments"
 
 # Looking at the code
 
