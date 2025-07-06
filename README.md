@@ -42,6 +42,7 @@ The `COOLIFY_URL` env var is missing also the port:
    * --> A Preview Deployment is triggered
    * --> Deployment is successful
    * --> Opening the link to the preview from the GitHub PR yields "Bad Gateway"
+9. If the preview domain works, you will see a different text on the website 
 
 # Looking at the code
 
