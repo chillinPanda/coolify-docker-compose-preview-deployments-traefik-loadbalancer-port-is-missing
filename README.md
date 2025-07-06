@@ -2,17 +2,26 @@
 
 Demo for reproducing the issue [#2184](https://github.com/coollabsio/coolify/issues/2184) where Preview Deployments are missing the traefik loadbalancer port label when using docker-compose.
 
-# Example
+# Observations
+
+## loadbalancer port label is missing
 
 The "normal" generated docker-compose.yaml contains:
 
 ```yaml
-- 'traefik.http.routers.https-0-uuid-prisma-studio.rule=Host(`prisma-studio.example.com`) && PathPrefix(`/`)'
-- traefik.http.services.http-0-uuid-prisma-studio.loadbalancer.server.port=5555
-- traefik.http.services.https-0-uuid-prisma-studio.loadbalancer.server.port=5555
+- 'traefik.http.routers.https-0-uuid-nginx.rule=Host(`reproduction.myhost.com`) && PathPrefix(`/`)'
+- traefik.http.services.http-0-uuid-nginx.loadbalancer.server.port=1234
+- traefik.http.services.https-0-uuid-nginx.loadbalancer.server.port=1234
 ```
 
 The "pr preview" docker-compose-pr-1.yaml is missing the two port lines.
+
+## COOLIFY_URL ENV is missing the port
+
+The `COOLIFY_URL` env var is missing also the port:
+
+* normal docker-compose.yaml has port, e.g. https://reproduction.myhost.com:1234
+* pr preview docker-compose-pr-1.yaml is lacking the port, e.g. https://reproduction.myhost.com
 
 # Reproduction
 
@@ -29,6 +38,10 @@ The "pr preview" docker-compose-pr-1.yaml is missing the two port lines.
 6. Verify that it is working
 7. Enable "Preview Deployments"
    * Configuration -> Advanced -> General -> Activate "Preview Deployments"
+8. Create a pull request in your fork merging branch `test-preview-deployment` into `main`
+   * --> A Preview Deployment is triggered
+   * --> Deployment is successful
+   * --> Opening the link to the preview from the GitHub PR yields "Bad Gateway"
 
 # Looking at the code
 
