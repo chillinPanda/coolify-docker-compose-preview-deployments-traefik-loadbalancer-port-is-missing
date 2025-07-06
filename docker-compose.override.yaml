@@ -1,0 +1,4 @@
+services:
+  nginx:
+    ports:
+      - "1234:1234"
