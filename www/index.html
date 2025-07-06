@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reproduction Demo for #2184</title>
+</head>
+<body>
+  <h1>Reproduction Demo for #2184</h1>
+  <p>Showing Preview Deployment port issue when using docker-compose</p>
+
+  <h2>References</h2>
+
+  <p>See the issue <a href="https://github.com/coollabsio/coolify/issues/2184">#2184</a></p>
+
+  <h2>Code</h2>
+
+  <p>I just did a little digging. Maybe I looked in the wrong places.</p>
+
+  <h3>"Normal Application"</h3>
+
+  <p>For the "normal" application, the configured port from the "Domains" settings section is used and added as a label:</p>
+  <a href="https://github.com/coollabsio/coolify/blob/6cc338b7a66ca68685da52fe28d6cd8b07aa628c/bootstrap/helpers/docker.php#L439">Code Link</a>
+
+  <pre>
+    <code>
+            if ($schema === 'https') {
+                // Set labels for https
+                $labels->push("traefik.http.routers.{$https_label}.rule=Host(`{$host}`) && PathPrefix(`{$path}`)");
+                $labels->push("traefik.http.routers.{$https_label}.entryPoints=https");
+                if ($port) {
+                    $labels->push("traefik.http.routers.{$https_label}.service={$https_label}");
+                    $labels->push("traefik.http.services.{$https_label}.loadbalancer.server.port=$port");
+                }
+    </code>
+  </pre>
+
+  <h3>Preview Deployment</h3>
+
+  <p>I see that the domain is replaced with the preview domain template, but I cannot find a port section.</p>
+
+  <a href="https://github.com/coollabsio/coolify/blob/6cc338b7a66ca68685da52fe28d6cd8b07aa628c/app/Livewire/Project/Application/Previews.php#L97">Code Link</a>
+
+  <pre>
+    <code>
+        $fqdn = generateFqdn($this->application->destination->server, $this->application->uuid);
+        $url = Url::fromString($fqdn);
+        $template = $this->application->preview_url_template;
+        $host = $url->getHost();
+        $schema = $url->getScheme();
+        $random = new Cuid2;
+        $preview_fqdn = str_replace('{{random}}', $random, $template);
+        $preview_fqdn = str_replace('{{domain}}', $host, $preview_fqdn);
+        $preview_fqdn = str_replace('{{pr_id}}', $preview->pull_request_id, $preview_fqdn);
+        $preview_fqdn = "$schema://$preview_fqdn";
+        $preview->fqdn = $preview_fqdn;
+        $preview->save();
+        $this->dispatch('success', 'Domain generated.');
+    </code>
+  </pre>
+</body>
+</html>
