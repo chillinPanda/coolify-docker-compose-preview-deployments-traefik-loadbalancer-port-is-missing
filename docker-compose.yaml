@@ -1,8 +1,6 @@
 services:
   nginx:
     image: nginx
-    ports:
-      - "1234:1234"
     volumes:
       - ./www:/usr/share/nginx/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
